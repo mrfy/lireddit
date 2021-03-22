@@ -1,26 +1,28 @@
 import "reflect-metadata";
 import "dotenv-safe/config";
-import { __prod__, COOKIE_NAME } from "./constants";
-import express from "express";
+
+import { COOKIE_NAME, __prod__ } from "./constants";
+
 import { ApolloServer } from "apollo-server-express";
-import { buildSchema } from "type-graphql";
 import { HelloResolver } from "./resolvers/hello";
+import { Post } from "./entities/Post";
 import { PostResolver } from "./resolvers/post";
-import { UserResolver } from "./resolvers/user";
 import Redis from "ioredis";
-import session from "express-session";
+import { Updoot } from "./entities/Updoot";
+import { User } from "./entities/User";
+import { UserResolver } from "./resolvers/user";
+import { buildSchema } from "type-graphql";
 import connectRedis from "connect-redis";
 import cors from "cors";
 import { createConnection } from "typeorm";
-import { Post } from "./entities/Post";
-import { User } from "./entities/User";
-import path from "path";
-import { Updoot } from "./entities/Updoot";
-import { createUserLoader } from "./utils/createUserLoader";
 import { createUpdootLoader } from "./utils/createUpdootLoader";
+import { createUserLoader } from "./utils/createUserLoader";
+import express from "express";
+import path from "path";
+import session from "express-session";
 
 const main = async () => {
-  const conn = await createConnection({
+  await createConnection({
     type: "postgres",
     url: process.env.DATABASE_URL,
     logging: true,
@@ -55,7 +57,7 @@ const main = async () => {
         httpOnly: true,
         sameSite: "lax", // csrf
         secure: __prod__, // cookie only works in https
-        domain: __prod__ ? ".codeponder.com" : undefined,
+        domain: __prod__ ? ".gregs.site" : undefined,
       },
       saveUninitialized: false,
       secret: process.env.SESSION_SECRET,
